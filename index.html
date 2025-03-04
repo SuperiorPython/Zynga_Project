@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>I Declare War</title>
+    <style>
+        #gameArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #playedCards {
+            display: flex;
+            margin-top: 20px;
+        }
+        #playedCards > div {
+            margin: 0 10px;
+            border: 1px solid black; /* Add borders to card displays */
+            padding: 5px; /* Add some padding */
+        }
+    </style>
+</head>
+<body>
+<div id="playerHand">My Cards: 0</div>
+<div id="playerWonCards">Won Cards: 0</div> <button id="playCardButton">Play Card</button>
+<div id="playedCards"></div>
+<div id="opponentHand">Opponent Cards: 0</div>
+<div id="opponentWonCards">Opponent Won Cards: 0</div> <div id="message"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    let myHandSize = 0;
+    let opponentHandSize = 0;
+    let myId = null;
+    let opponentId = null;
+
+    const playCardButton = document.getElementById('playCardButton');
+    const playerHandDisplay = document.getElementById('playerHand');
+    const opponentHandDisplay = document.getElementById('opponentHand');
+    const playedCardsDisplay = document.getElementById('playedCards');
+    const messageDisplay = document.getElementById('message');
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        myId = socket.id;
+        opponentId = null;
+        messageDisplay.textContent = ""; // Clear message on connect
+    });
+
+    socket.on('dealCards', (handSize) => {
+        myHandSize = handSize;
+        playerHandDisplay.textContent = `My Cards: ${myHandSize}`;
+    });
+
+    socket.on('opponentConnected', (id) => {
+        opponentId = id;
+        messageDisplay.textContent = "Opponent connected!";
+    });
+
+    socket.on('opponentDisconnected', () => {
+        opponentId = null;
+        opponentHandSize = 0;
+        opponentHandDisplay.textContent = `Opponent Cards: ${opponentHandSize}`;
+        messageDisplay.textContent = "Opponent disconnected.";
+        playedCardsDisplay.innerHTML = ''; // Clear played cards
+    });
+
+    playCardButton.addEventListener('click', () => {
+        if (myHandSize > 0 && opponentId) { // Check for opponent before playing
+            socket.emit('playCard');
+            playedCardsDisplay.innerHTML = ''; // Clear played cards
+            messageDisplay.textContent = "";
+        } else if (myHandSize <= 0){
+            messageDisplay.textContent = "You have no more cards!";
+        } else {
+            messageDisplay.textContent = "Waiting for an opponent...";
+        }
+    });
+
+    const playerWonCardsDisplay = document.getElementById('playerWonCards');
+    const opponentWonCardsDisplay = document.getElementById('opponentWonCards');
+
+    socket.on('roundOver', (winnerId, loserId, player1HandSize, player2HandSize, player1WonCardsSize, player2WonCardsSize) => {
+        if (myId === winnerId) {
+            myHandSize = player1HandSize;
+            opponentHandSize = player2HandSize;
+            playerWonCardsDisplay.textContent = `Won Cards: ${player1WonCardsSize}`;
+            opponentWonCardsDisplay.textContent = `Opponent Won Cards: ${player2WonCardsSize}`;
+            messageDisplay.textContent = "You won the round!";
+        } else {
+            myHandSize = player2HandSize;
+            opponentHandSize = player1HandSize;
+            playerWonCardsDisplay.textContent = `Won Cards: ${player2WonCardsSize}`;
+            opponentWonCardsDisplay.textContent = `Opponent Won Cards: ${player1WonCardsSize}`;
+            messageDisplay.textContent = "You lost the round!";
+        }
+
+        playerHandDisplay.textContent = `My Cards: ${myHandSize}`;
+        opponentHandDisplay.textContent = `Opponent Cards: ${opponentHandSize}`;
+    });
+
+    socket.on('waitingForOpponent', () => {
+        messageDisplay.textContent = "Waiting for an opponent...";
+    });
+
+    socket.on('cardPlayed', (card) => {
+        const playedCardElement = document.createElement('div');
+        playedCardElement.textContent = `${card.rank} of ${card.suit}`;
+        playedCardsDisplay.appendChild(playedCardElement);
+    });
+
+    socket.on('opponentPlayedCard', () => {
+        messageDisplay.textContent = "Opponent has played.";
+    });
+
+    socket.on('disconnect', () => {
+        console.log("Disconnected from server.");
+        messageDisplay.textContent = "Disconnected from server.";
+        myHandSize = 0;
+        opponentHandSize = 0;
+        playerHandDisplay.textContent = `Cards: ${myHandSize}`;
+        opponentHandDisplay.textContent = `Opponent Cards: ${opponentHandSize}`;
+        playedCardsDisplay.innerHTML = '';
+        opponentId = null; // Reset opponent ID
+    });
+
+</script>
+</body>
+</html>
