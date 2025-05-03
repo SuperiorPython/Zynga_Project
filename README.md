@@ -7,6 +7,26 @@ A Unity recreation of the classic card game **"I Declare War"**, built with enga
 - **Bryson Wingate** – Lead Programmer & Feature Designer  
 - **Samaii Hartley** – Game Logic Collaborator & Visual Feedback Design
 
+---
+
+## Who Did What
+
+### Bryson Wingate
+- Developed the full game loop and round logic
+- Implemented card flipping animations
+- Created the war resolution system
+- Debugged winner detection logic and tie-break recursion
+- Handled player color assignments and card movement
+
+### Samaii Hartley
+- Helped define visual structure of CPU player layout
+- Suggested and designed color schemes for better player clarity
+- Helped test war scenarios and pointed out tie-breaking bugs
+- Provided design input on skip/restart features and screen layout
+-  Managed Unity project structure and GitHub integration
+
+---
+
 ## Features Implemented
 
 - 1 vs 3 CPU player logic with round-based play
