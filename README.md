@@ -16,13 +16,13 @@ A Unity recreation of the classic card game **"I Declare War"**, built with enga
 
 ## Upcoming Features
 
-- 🎬 **Begin Game Screen** – Add a start UI to launch rounds
-- 🔍 **Enlarged Cards** – Scale cards for better visibility
-- 🎨 **Updated Blue Color** – Adjust CPU 2’s color for readability
-- 🔁 **Restart Button** – Quickly reset and replay the game
-- 🧮 **Round Counter** – Track how many rounds have been played
-- ⏭️ **Skip Button** – End game early if one player remains
-- 🏆 **Placement Tracker** – Show 1st, 2nd, 3rd, and 4th place
+- **Begin Game Screen** – Add a start UI to launch rounds
+- **Enlarged Cards** – Scale cards for better visibility
+- **Updated Blue Color** – Adjust CPU 2’s color for readability
+- **Restart Button** – Quickly reset and replay the game
+- **Round Counter** – Track how many rounds have been played
+- **Skip Button** – End game early if one player remains
+- **Placement Tracker** – Show 1st, 2nd, 3rd, and 4th place
 
 ---
 
